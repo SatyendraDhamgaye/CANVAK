@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Premium T-Shirt — Single Page</title>
+    <link rel="stylesheet" href="Assets/style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="Assets/img/LOGO-06.png" alt="PremiumTee Logo" />
+  </div>
+  <div class="ad">🎉 Get 20% off on your first order!</div>
+</header>
+
+
+    <div class="wrap">
+        <div class="card" role="main" aria-labelledby="productTitle">
+            <!-- LEFT: IMAGE + THUMBS -->
+            <div class="product-panel">
+                <div class="image-tile" id="imageTile">
+                    <!-- default main image -->
+                    <img id="mainImage" src="Assets/img/5.jpg" alt="Premium T-Shirt - front">
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="thumbs" id="thumbs">
+                        <!-- thumbnails (click to change) -->
+                        <div class="thumb active" data-src="Assets/img/5.jpg" title="Front">
+                            <img src="Assets/img/5.jpg" alt="front">
+                        </div>
+                        <div class="thumb" data-src="Assets/img/5-2.jpg" title="Back">
+                            <img src="Assets/img/5-2.jpg" alt="back">
+                        </div>
+                        <div class="thumb" data-src="Assets/img/5-1.jpg" title="Close up">
+                            <img src="Assets/img/5-1.jpg" alt="close">
+                        </div>
+                        <div class="thumb" data-src="images/tshirt-model.jpg" title="On model">
+                            <img src="images/tshirt-model-thumb.jpg" alt="model">
+                        </div>
+                    </div>
+
+                    <div style="text-align:right" class="small">
+                        <div style="font-weight:700">Premium</div>
+                        <div style="color:var(--muted)">Limited drop</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: DETAILS + PURCHASE -->
+            <aside class="details" aria-labelledby="productTitle">
+                <div class="brand">CANVAK • Premium</div>
+                <h1 id="productTitle">Classic Premium T-Shirt</h1>
+                <div class="price" id="price">₹1,599</div>
+                <div class="description">A buttery soft, premium-fit tee crafted from long-staple cotton. Small batch,
+                    ethically made. Wear it with everything.</div>
+
+                <div class="options" aria-label="Product options">
+                    <div>
+                        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Color</div>
+                        <div class="option-row" id="colorOpts">
+                            <div class="opt selected" data-value="Black" data-image="images/tshirt-front.jpg">Black
+                            </div>
+                            <div class="opt" data-value="White" data-image="images/tshirt-front-white.jpg">White</div>
+                            <div class="opt" data-value="Olive" data-image="images/tshirt-front-olive.jpg">Olive</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Size</div>
+                        <div class="option-row" id="sizeOpts">
+                            <div class="opt selected" data-value="M">M</div>
+                            <div class="opt" data-value="L">L</div>
+                            <div class="opt" data-value="XL">XL</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Style</div>
+                        <div class="option-row" id="styleOpts">
+                            <div class="opt selected" data-value="Regular">Regular</div>
+                            <div class="opt" data-value="Slim">Slim</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls" style="margin-top:8px">
+                    <div class="qty" aria-label="Quantity selector">
+                        <button id="decQty" aria-label="Decrease">−</button>
+                        <div class="num" id="qtyNum">1</div>
+                        <button id="incQty" aria-label="Increase">+</button>
+                    </div>
+
+                    <button class="add-btn" id="addCart">Add to cart</button>
+                    <button class="ghost-btn" id="buyNow">Buy now</button>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px">
+                    <div class="meta">
+                        <div class="chip">Free shipping over ₹2,499</div>
+                        <div style="color:var(--muted);font-size:13px">• 30 day returns</div>
+                    </div>
+                    <div class="small">Secure checkout</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <aside id="cartDrawer" class="cart-drawer" aria-hidden="true" role="region" aria-label="Cart">
+        <div class="cart-head">
+            <strong>Cart</strong>
+            <button id="closeCart" aria-label="Close cart"
+                style="background:none;border:0;cursor:pointer;font-size:18px">✕</button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="small" style="padding:8px;color:var(--muted)">Your cart is empty</div>
+        </div>
+        <div class="cart-foot">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="small">Subtotal</div>
+                <div id="subtotal" style="font-weight:700">₹0</div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="ghost-btn" id="continueBtn">Continue shopping</button>
+                <button class="add-btn" id="checkoutBtn">Checkout</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CHECKOUT OVERLAY -->
+    <div id="checkoutOverlay" class="checkout-overlay" aria-hidden="true">
+        <div class="checkout" role="dialog" aria-modal="true" aria-label="Checkout">
+            <h2 style="margin-top:0">Checkout</h2>
+            <div class="form-grid" style="margin-top:12px">
+                <div>
+                    <label class="small">Full name</label>
+                    <input id="name" type="text" placeholder="Name">
+                </div>
+                <div>
+                    <label class="small">Email</label>
+                    <input id="email" type="email" placeholder="you@example.com">
+                </div>
+                <div style="grid-column:1 / -1">
+                    <label class="small">Address</label>
+                    <input id="address" type="text" placeholder="Street, city, postal code">
+                </div>
+                <div>
+                    <label class="small">Phone</label>
+                    <input id="phone" type="text" placeholder="+91 98765 43210">
+                </div>
+                <div>
+                    <label class="small">Payment method</label>
+                    <div class="pay-methods" id="payMethods">
+                        <div class="pay sel" data-pay="upi">UPI</div>
+                        <div class="pay" data-pay="card">Card</div>
+                        <div class="pay" data-pay="cod">Cash on Delivery</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
+                <div class="small">Order total <strong id="orderTotal">₹0</strong></div>
+                <div style="display:flex;gap:10px">
+                    <button class="ghost-btn" id="cancelCheckout">Cancel</button>
+                    <button class="add-btn" id="placeOrder">Place order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <h3>Contact Us</h3>
+        <p>Email: support@premiumtee.com</p>
+        <p>Phone: +91 98765 43210</p>
+        <p>Address: Nagpur, India</p>
+        <p>© 2025 PremiumTee. All rights reserved.</p>
+    </footer>
+
+    <script src="Assets/script.js"></script>
+</body>
+
+</html>
