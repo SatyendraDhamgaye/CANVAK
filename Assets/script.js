@@ -8,6 +8,168 @@ const state = {
     items: []
 };
 
+// ---------- SELECTION LOGGING PATCH (paste after your `state` object) ----------
+/* ensures state has selection fields */
+state.selection = {
+  size: state.size || 'M',
+  fit: state.style || 'Regular',
+  image: document.getElementById('mainImage') ? document.getElementById('mainImage').src : '',
+  qty: state.qty || 1,
+  price: state.unitPrice || 0
+};
+
+function sendOrderEmail(summary) {
+  return emailjs.send("service_iuud3b3", "template_djkhsdl", {
+    name: summary.name,
+    email: summary.email,
+    phone: summary.phone,
+    address: summary.address,
+    paymentMethod: summary.paymentMethod,
+    total: summary.total,
+    items: JSON.stringify(summary.items, null, 2),
+    order_json: JSON.stringify(summary, null, 2),
+    time: new Date().toLocaleString(),
+    to_email: "YOUR_EMAIL_HERE"
+  });
+}
+
+
+
+/* helper: prints current selection object to console */
+function logSelection(context = '') {
+  const sel = {
+    size: state.selection.size,
+    fit: state.selection.fit,
+    image: state.selection.image,
+    qty: state.selection.qty,
+    price: state.selection.price
+  };
+  console.log('[Selection' + (context ? ' - ' + context : '') + ']', sel);
+}
+
+/* wire size options (if you already have attachOption, this is redundant — but safe) */
+const sizeContainer = document.getElementById('sizeOpts');
+if (sizeContainer) {
+  sizeContainer.querySelectorAll('.opt').forEach(el => {
+    el.addEventListener('click', () => {
+      // update state.selection.size
+      state.selection.size = el.getAttribute('data-value') || el.textContent.trim();
+      state.size = state.selection.size; // keep legacy state in sync
+      logSelection('size changed');
+    });
+  });
+}
+
+/* wire fit/style options */
+const fitContainer = document.getElementById('styleOpts');
+if (fitContainer) {
+  fitContainer.querySelectorAll('.opt').forEach(el => {
+    el.addEventListener('click', () => {
+      state.selection.fit = el.getAttribute('data-value') || el.textContent.trim();
+      state.style = state.selection.fit;
+      logSelection('fit changed');
+    });
+  });
+}
+
+/* wire thumbnail clicks to update selected image */
+const thumbs = document.querySelectorAll('.thumb');
+thumbs.forEach(t => {
+  t.addEventListener('click', (ev) => {
+    const src = t.getAttribute('data-src') || (t.querySelector('img') && t.querySelector('img').src);
+    if (src) {
+      // update main image and state
+      const mainImg = document.getElementById('mainImage') || document.getElementById('mainImg');
+      if (mainImg) mainImg.src = src;
+      state.selection.image = src;
+      logSelection('image changed');
+    }
+  });
+});
+
+/* quantity changes should also update selection (if you have +/- controls) */
+const incBtn = document.getElementById('incQty');
+const decBtn = document.getElementById('decQty');
+const qtyDisplay = document.getElementById('qtyNum') || document.getElementById('qty');
+
+function syncQty() {
+  // handle both select (#qty) and numeric display (#qtyNum)
+  const qEl = document.getElementById('qty');
+  let q = 1;
+  if (qEl && qEl.tagName.toLowerCase() === 'select') q = parseInt(qEl.value, 10) || 1;
+  else if (qtyDisplay) q = parseInt(qtyDisplay.textContent || qtyDisplay.value || 1, 10) || 1;
+  state.selection.qty = q;
+  state.qty = q;
+  logSelection('qty changed');
+}
+if (incBtn) incBtn.addEventListener('click', () => { setTimeout(syncQty, 0); });
+if (decBtn) decBtn.addEventListener('click', () => { setTimeout(syncQty, 0); });
+const qtySelect = document.getElementById('qty');
+if (qtySelect) qtySelect.addEventListener('change', syncQty);
+
+/* make Add to cart & Buy now also print the selection (they already add to cart) */
+const addBtn = document.getElementById('addCart') || document.querySelector('.add-btn');
+if (addBtn) {
+  addBtn.addEventListener('click', () => {
+    // ensure qty synced immediately
+    syncQty();
+    logSelection('Add to Cart clicked');
+  }, { capture: true });
+}
+// === Replace buyNow with a clean clone to remove old listeners ===
+(function() {
+  let buyBtn = document.getElementById('buyNow');
+  if (!buyBtn) return;
+
+  // clone to remove any old event listeners
+  const clean = buyBtn.cloneNode(true);
+  buyBtn.parentNode.replaceChild(clean, buyBtn);
+  buyBtn = clean; // reassign to the fresh node
+
+  // fresh handler — STOP propagation so no other listener runs
+  buyBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation(); // critical: prevents delegated or parent listeners from firing
+
+    // keep your original utilities
+    try { if (typeof syncQty === 'function') syncQty(); } catch (err) {}
+    try { if (typeof logSelection === 'function') logSelection('Buy Now clicked'); } catch (err) {}
+
+    // build item safely (check ids used in your page)
+    const mainImgEl = document.getElementById('mainImage') || document.getElementById('mainImg') || document.getElementById('mainImg') || document.querySelector('.thumb.active img');
+    const mainImgSrc = mainImgEl ? (mainImgEl.src || mainImgEl.getAttribute('data-src') || '') : '';
+
+    const item = {
+      title: state.title || 'Premium T-Shirt',
+      price: state.unitPrice || 1599,
+      qty: state.qty || (state.selection?.qty || 1),
+      color: state.color || state.selection?.color || '',
+      size: state.size || state.selection?.size || '',
+      style: state.style || state.selection?.fit || state.selection?.style || '',
+      image: mainImgSrc
+    };
+
+    // push item to cart state
+    state.items.push(item);
+
+    // UI updates
+    try { renderCart(); } catch (err) {}
+    try { if (typeof updateCartBadge === 'function') updateCartBadge(); } catch (err) {}
+    try { if (typeof positionCartDrawer === 'function') positionCartDrawer(); } catch (err) {}
+    try { if (typeof openCart === 'function') openCart(); } catch (err) {}
+
+    // accessibility focus
+    try { cartDrawer && cartDrawer.focus && cartDrawer.focus(); } catch (err) {}
+
+    // Done — intentionally DO NOT open checkout here
+  }, { capture: true });
+})();
+
+
+// initial log (page load)
+logSelection('initial');
+
+
 // helpers
 const money = n => '₹' + (n).toLocaleString('en-IN');
 
@@ -23,24 +185,33 @@ document.querySelectorAll('.thumb').forEach(t => {
 });
 
 // option selections
-function attachOption(containerId, key, changeImage = false) {
-    const container = document.getElementById(containerId);
-    container.querySelectorAll('.opt').forEach(el => {
-        el.addEventListener('click', () => {
-            container.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
-            el.classList.add('selected');
-            const v = el.getAttribute('data-value');
-            state[key] = v;
-            // if option carries an image, update main
-            const img = el.getAttribute('data-image');
-            if (img) document.getElementById('mainImage').src = img;
-            refreshSummary();
-        });
+function attachOption(containerId, key) {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    // no element found — do nothing (prevents runtime error)
+    console.warn(`attachOption: no element with id '${containerId}'`);
+    return;
+  }
+
+  container.querySelectorAll('.opt').forEach(el => {
+    el.addEventListener('click', () => {
+      container.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
+      el.classList.add('selected');
+      const v = el.getAttribute('data-value');
+      state[key] = v;
+      // if option carries an image, update main
+      const img = el.getAttribute('data-image');
+      if (img) document.getElementById('mainImage').src = img;
+      refreshSummary();
     });
+  });
 }
-attachOption('colorOpts', 'color', true);
-attachOption('sizeOpts', 'size');
-attachOption('styleOpts', 'style');
+
+// safe calls — if an id is missing, attachOption will return without breaking
+attachOption('colorOpts','color');
+attachOption('sizeOpts','size');
+attachOption('styleOpts','style');
+
 
 // qty controls
 const qtyNum = document.getElementById('qtyNum');
@@ -77,12 +248,116 @@ function renderCart() {
         sum += it.price * it.qty;
         const div = document.createElement('div');
         div.className = 'cart-item';
-        div.innerHTML = `<img src="${it.image}" alt=""><div style="flex:1"><div style="font-weight:600">${it.title}</div><div class="small" style="color:var(--muted)">${it.color} • ${it.size} • ${it.style}</div></div><div style="text-align:right"><div style="font-weight:700">${money(it.price * it.qty)}</div><div class="small">Qty ${it.qty}</div></div>`;
+        div.innerHTML = `
+  <img src="${it.image}" alt="">
+  <div style="flex:1">
+    <div style="font-weight:600">${it.title}</div>
+    <div class="small" style="color:var(--muted)">
+      ${it.color} • ${it.size} • ${it.style}
+    </div>
+    <div class="small">Qty ${it.qty}</div>
+  </div>
+
+  <div style="text-align:right; margin-right:8px;">
+    <div style="font-weight:700">${money(it.price * it.qty)}</div>
+  </div>
+
+  <!-- NEW DELETE ICON -->
+  <button class="del-btn" data-index="${idx}" aria-label="Remove item">
+    ✕
+  </button>
+`;
         cartBody.appendChild(div);
     });
     subtotalEl.textContent = money(sum);
     document.getElementById('orderTotal').textContent = money(sum);
 }
+
+cartBody.addEventListener('click', function(e) {
+  if (e.target.classList.contains('del-btn')) {
+    e.stopPropagation();
+    const index = e.target.getAttribute('data-index');
+    state.items.splice(index, 1);   // remove item
+    renderCart();                   // refresh cart
+    updateCartBadge();              // update badge
+  }
+});
+
+
+const cartBtn = document.getElementById('cartBtn');
+const cartBadge = document.getElementById('cartBadge');
+const headerEl = document.querySelector('header');
+
+// Position the cart drawer below the header (handles responsive header height)
+function positionCartDrawer() {
+    const headerH = headerEl ? headerEl.getBoundingClientRect().height : 0;
+    cartDrawer.style.top = (headerH + 12) + 'px';
+    // keep the z-index high (CSS also sets this)
+    cartDrawer.style.zIndex = 2200;
+}
+window.addEventListener('resize', positionCartDrawer);
+window.addEventListener('load', positionCartDrawer);
+// if logo image changes size after load, re-run
+document.querySelectorAll('header img').forEach(img => img.addEventListener('load', positionCartDrawer));
+
+// update badge whenever cart changes
+function updateCartBadge() {
+    const totalItems = state.items.reduce((s, it) => s + it.qty, 0);
+    cartBadge.textContent = totalItems;
+    cartBadge.style.display = totalItems ? 'inline-flex' : 'none';
+}
+
+// open/close cart drawer and toggle aria-expanded
+function openCart() {
+    cartDrawer.classList.add('visible');
+    cartDrawer.setAttribute('aria-hidden', 'false');
+    cartBtn.setAttribute('aria-expanded', 'true');
+}
+function closeCart() {
+    cartDrawer.classList.remove('visible');
+    cartDrawer.setAttribute('aria-hidden', 'true');
+    cartBtn.setAttribute('aria-expanded', 'false');
+}
+
+// wire button
+cartBtn.addEventListener('click', () => {
+    if (cartDrawer.classList.contains('visible')) closeCart();
+    else {
+        renderCart();      // make sure cart contents are up-to-date
+        updateCartBadge();
+        positionCartDrawer();
+        openCart();
+    }
+});
+
+// close drawer if click outside (optional but nice)
+// Keep cart open while deleting items
+window.addEventListener('click', (e) => {
+
+  // If click is inside cart or cart button → DO NOTHING
+  if (
+    cartDrawer.contains(e.target) ||
+    cartBtn.contains(e.target)
+  ) return;
+
+  // Otherwise, close
+  if (cartDrawer.classList.contains('visible')) {
+    closeCart();
+  }
+});
+
+
+// whenever cart changes (you already call renderCart after add/remove)
+// ensure renderCart calls updateCartBadge at the end:
+const originalRenderCart = renderCart;
+renderCart = function () {
+    originalRenderCart();
+    updateCartBadge();
+};
+
+// initial badge state
+updateCartBadge();
+positionCartDrawer();
 
 document.getElementById('addCart').addEventListener('click', () => {
     // push to cart
@@ -131,27 +406,60 @@ document.getElementById('payMethods').querySelectorAll('.pay').forEach(p => {
 
 // place order (simulated)
 document.getElementById('placeOrder').addEventListener('click', () => {
-    const name = document.getElementById('name').value.trim();
-    const address = document.getElementById('address').value.trim();
-    if (!name || !address) {
-        alert('Please enter name and address.');
-        return;
-    }
-    // pretend to process payment
-    const total = state.items.reduce((s, i) => s + i.price * i.qty, 0);
-    // Clear cart & show summary
-    const summary = {
-        name, address, email: document.getElementById('email').value, phone: document.getElementById('phone').value,
-        total, items: state.items.slice()
-    };
-    // clear
-    state.items = [];
-    renderCart();
-    closeCheckout();
-    closeCart();
-    // Show a simple confirmation (in production you'd send to server)
-    alert(`Thanks ${summary.name}! Order placed for ${summary.items.length} item(s). Total: ${money(summary.total)}. (This is a demo checkout.)`);
+  const name = document.getElementById('name').value.trim();
+  const address = document.getElementById('address').value.trim();
+
+  if (!name || !address) {
+    alert('Please enter name and address.');
+    return;
+  }
+
+  // make phone number mandatory
+const phone = document.getElementById('phone').value.trim();
+if (!phone) {
+  alert('Please enter your mobile number.');
+  return;
+}
+
+
+  // find selected payment method (fallback to 'Unknown' if none)
+  const paySel = document.querySelector('#payMethods .pay.sel');
+  const paymentMethod = paySel ? (paySel.getAttribute('data-pay') || paySel.textContent.trim()) : 'cod';
+
+  const total = state.items.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const summary = {
+    name,
+    address,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    paymentMethod,
+    total,
+    items: state.items.slice()
+  };
+
+  // updated alert includes payment method
+  alert(`Thanks ${summary.name}! Order placed for ${summary.items.length} item(s). Total: ₹${summary.total}. Payment method: ${summary.paymentMethod}. (This is a demo checkout.)`);
+
+  // print final order once
+  console.log("FINAL ORDER DETAILS:", summary);
+
+  sendOrderEmail(summary)
+  .then(() => {
+    console.log("Order email sent successfully.");
+  })
+  .catch(err => {
+    console.error("Failed to send order email:", err);
+  });
+
+
+  // clear cart & UI
+  state.items = [];
+  renderCart();
+  closeCheckout();
+  closeCart();
 });
+
 
 // small helpers
 function refreshSummary() {
