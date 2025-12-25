@@ -1,3 +1,53 @@
+// Custom Alert System
+function showCustomAlert(message, title = 'Alert', type = 'info') {
+    // Remove existing alerts
+    const existing = document.querySelector('.alert-overlay');
+    if (existing) existing.remove();
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'alert-overlay visible';
+
+    // Create alert
+    const alert = document.createElement('div');
+    alert.className = 'custom-alert';
+    alert.innerHTML = `
+        <div class="alert-content">
+            <div class="alert-title">${title}</div>
+            <div class="alert-message">${message}</div>
+        </div>
+        <div class="alert-actions">
+            <button class="alert-btn primary" onclick="closeCustomAlert()">OK</button>
+        </div>
+    `;
+
+    overlay.appendChild(alert);
+    document.body.appendChild(overlay);
+
+    // Focus for accessibility
+    alert.querySelector('.alert-btn').focus();
+
+    // Close on ESC
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+            closeCustomAlert();
+            document.removeEventListener('keydown', handleEsc);
+        }
+    };
+    document.addEventListener('keydown', handleEsc);
+}
+
+function closeCustomAlert() {
+    const overlay = document.querySelector('.alert-overlay');
+    if (overlay) overlay.remove();
+}
+
+// Override default alert
+const originalAlert = window.alert;
+window.alert = function(message) {
+    showCustomAlert(message);
+};
+
 const state = {
     title: 'Classic Premium T-Shirt',
     unitPrice: 1599,
@@ -439,7 +489,8 @@ if (!phone) {
   };
 
   // updated alert includes payment method
-  alert(`Thanks ${summary.name}! Order placed for ${summary.items.length} item(s). Total: ₹${summary.total}. Payment method: ${summary.paymentMethod}. (This is a demo checkout.)`);
+  const formattedMessage = `Thanks <strong>${summary.name}</strong>! Order placed for <span class="highlight">${summary.items.length} item(s)</span>.<br><br>Total: <span class="price">₹${summary.total}</span><br>Payment method: <strong>${summary.paymentMethod}</strong><br><br><em>This is a demo checkout.</em>`;
+  showCustomAlert(formattedMessage, 'Order Confirmed');
 
   // print final order once
   console.log("FINAL ORDER DETAILS:", summary);

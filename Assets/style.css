@@ -498,6 +498,133 @@ header .ad {
     border-radius: 8px;
 }
 
+/* Custom Alert Styling */
+.custom-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    padding: 32px;
+    min-width: 360px;
+    max-width: 90vw;
+    z-index: 3000;
+    border: 1px solid #eee;
+    animation: alertSlideIn 0.3s ease-out;
+}
+
+@keyframes alertSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.custom-alert .alert-content {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.custom-alert .alert-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+}
+
+.custom-alert .alert-message {
+    color: var(--muted);
+    line-height: 1.5;
+    font-size: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Style specific text elements in alerts */
+.custom-alert .alert-message strong {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.custom-alert .alert-message .price {
+    color: #e02b3a;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.custom-alert .alert-message .highlight {
+    background: linear-gradient(120deg, #f3f3f4 0%, #e8e8e9 100%);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.custom-alert .alert-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.custom-alert .alert-btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+    min-width: 80px;
+}
+
+.custom-alert .alert-btn.primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-alert .alert-btn.primary:hover {
+    background: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.custom-alert .alert-btn.secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid #ddd;
+}
+
+.custom-alert .alert-btn.secondary:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+}
+
+.alert-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2999;
+    display: none;
+    backdrop-filter: blur(4px);
+}
+
+.alert-overlay.visible {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 footer {
     background: var(--card);
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.06);
