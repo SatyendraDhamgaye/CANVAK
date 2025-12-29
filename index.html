@@ -1,15 +1,58 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Premium T-Shirt — Single Page</title>
-    <link rel="stylesheet" href="Assets/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvak | Under Maintenance</title>
+  <link rel="stylesheet" href="./Assets/maintenance.css" />
 </head>
-
 <body>
-<h1><center>Maintenance</center></h1>
-</body>
 
+  <main class="container">
+
+    <!-- Logo -->
+    <div class="logo-wrapper">
+      <img 
+        src="./Assets/img/LOGO-06.png" 
+        alt="Canvak Logo" 
+        class="logo"
+      />
+    </div>
+
+    <!-- Text -->
+    <h1 class="title">We’re refining your shopping experience</h1>
+    <p class="subtitle">Our store will be back shortly with something better</p>
+
+    <!-- Countdown -->
+    <section class="countdown">
+      <div class="time-box">
+        <span id="days">00</span>
+        <small>DAYS</small>
+      </div>
+      <div class="time-box">
+        <span id="hours">00</span>
+        <small>HOURS</small>
+      </div>
+      <div class="time-box">
+        <span id="minutes">00</span>
+        <small>MINUTES</small>
+      </div>
+      <div class="time-box">
+        <span id="seconds">00</span>
+        <small>SECONDS</small>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <form class="newsletter">
+      <input type="email" placeholder="Enter your email" required />
+      <button type="submit">Notify Me</button>
+    </form>
+
+    <p class="footer">© <span id="currentYear"></span> Canvak. All rights reserved.</p>
+
+  </main>
+
+  <script src="./Assets/maintenance.js"></script>
+</body>
 </html>
