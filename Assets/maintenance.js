@@ -1,6 +1,6 @@
 // SET YOUR LAUNCH DATE HERE (YYYY-MM-DDTHH:MM:SS)
 console.log("The js file is loaded");
-const launchDate = new Date("2025-12-31T10:00:00").getTime();
+const launchDate = new Date("2026-02-01T10:00:00").getTime();
 
 const daysEl = document.getElementById("days");
 const hoursEl = document.getElementById("hours");
