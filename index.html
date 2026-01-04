@@ -40,25 +40,45 @@
             <div class="product-panel">
                 <div class="image-tile" id="imageTile">
                     <!-- default main image -->
-                    <img id="mainImage" src="Assets/img/5.jpg" alt="Premium T-Shirt - front">
+                    <img id="mainImage" src="Assets/img/1.jpg" alt="Premium T-Shirt - front view">
                 </div>
 
                 <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div class="thumbs" id="thumbs">
-                        <!-- thumbnails (click to change) -->
-                        <div class="thumb active" data-src="Assets/img/5.jpg" title="Front">
-                            <img src="Assets/img/5.jpg" alt="front">
+                    <div class="thumbs" id="thumbs" style="display:flex;gap:8px;flex-wrap:wrap;max-width:100%;overflow-x:auto">
+                        <!-- Main T-Shirt Selection -->
+                        <div class="thumb active" data-tshirt="1" data-src="Assets/img/1.jpg" title="T-Shirt 1">
+                            <img src="Assets/img/1.jpg" alt="t-shirt 1">
                         </div>
-                        <div class="thumb" data-src="Assets/img/5-2.jpg" title="Back">
-                            <img src="Assets/img/5-2.jpg" alt="back">
+                        <div class="thumb" data-tshirt="2" data-src="Assets/img/2.jpg" title="T-Shirt 2">
+                            <img src="Assets/img/2.jpg" alt="t-shirt 2">
                         </div>
-                        <div class="thumb" data-src="Assets/img/5-1.jpg" title="Close up">
-                            <img src="Assets/img/5-1.jpg" alt="close">
+                        <div class="thumb" data-tshirt="3" data-src="Assets/img/3.jpg" title="T-Shirt 3">
+                            <img src="Assets/img/3.jpg" alt="t-shirt 3">
                         </div>
-                        <div class="thumb" data-src="images/tshirt-model.jpg" title="On model">
-                            <img src="images/tshirt-model-thumb.jpg" alt="model">
+                        <div class="thumb" data-tshirt="4" data-src="Assets/img/4.jpg" title="T-Shirt 4">
+                            <img src="Assets/img/4.jpg" alt="t-shirt 4">
+                        </div>
+                        <div class="thumb" data-tshirt="5" data-src="Assets/img/5.jpg" title="T-Shirt 5">
+                            <img src="Assets/img/5.jpg" alt="t-shirt 5">
+                        </div>
+                        <div class="thumb" data-tshirt="6" data-src="Assets/img/6.jpg" title="T-Shirt 6">
+                            <img src="Assets/img/6.jpg" alt="t-shirt 6">
+                        </div>
+                        <div class="thumb" data-tshirt="7" data-src="Assets/img/7.jpg" title="T-Shirt 7">
+                            <img src="Assets/img/7.jpg" alt="t-shirt 7">
+                        </div>
+                        <div class="thumb" data-tshirt="8" data-src="Assets/img/8.jpg" title="T-Shirt 8">
+                            <img src="Assets/img/8.jpg" alt="t-shirt 8">
                         </div>
                     </div>
+                    
+                    <!-- View Options for Selected T-Shirt -->
+                    <div id="viewOptions" class="view-options" style="display:flex;gap:6px;margin-left:12px">
+                        <div class="view-thumb active" data-view="front" title="Front View">
+                            <img id="frontImg" src="Assets/img/1.jpg" alt="front">
+                        </div>
+                        
+                    </div>      
 
                     <div style="text-align:right" class="small">
                         <div style="font-weight:700">Premium</div>

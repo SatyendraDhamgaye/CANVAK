@@ -73,19 +73,62 @@ body {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 8px
+    margin-top: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.thumb-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 60px;
 }
 
 .thumb {
-    width: 74px;
-    height: 74px;
-    border-radius: 8px;
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
     overflow: hidden;
     cursor: pointer;
     border: 2px solid transparent;
     display: flex;
     align-items: center;
-    justify-content: center
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.thumb:hover {
+    border-color: #ddd;
+    transform: scale(1.05);
+}
+
+.view-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.view-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.view-thumb:hover {
+    border-color: #ddd;
+    transform: scale(1.05);
+}
+
+.view-thumb.active {
+    border-color: var(--accent);
 }
 
 .thumb img {

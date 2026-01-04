@@ -1,3 +1,67 @@
+// T-shirt and view selection functionality
+let currentTshirt = '1';
+
+// T-shirt selection
+document.querySelectorAll('[data-tshirt]').forEach(thumb => {
+    thumb.addEventListener('click', function() {
+        // Remove active from all t-shirt thumbs
+        document.querySelectorAll('[data-tshirt]').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        currentTshirt = this.dataset.tshirt;
+        
+        // Update main image
+        document.getElementById('mainImage').src = `Assets/img/${currentTshirt}.jpg`;
+        
+        // Update view option images
+        document.getElementById('frontImg').src = `Assets/img/${currentTshirt}.jpg`;
+        document.getElementById('backImg').src = `Assets/img/${currentTshirt}-back.jpg`;
+        document.getElementById('closeImg').src = `Assets/img/${currentTshirt}-close.jpg`;
+        document.getElementById('modelImg').src = `Assets/img/${currentTshirt}-model.jpg`;
+        
+        // Reset to front view
+        document.querySelectorAll('.view-thumb').forEach(v => v.classList.remove('active'));
+        document.querySelector('[data-view="front"]').classList.add('active');
+    });
+});
+
+// View selection (front, back, close, model)
+document.querySelectorAll('[data-view]').forEach(viewThumb => {
+    viewThumb.addEventListener('click', function() {
+        // Remove active from all view thumbs
+        document.querySelectorAll('.view-thumb').forEach(v => v.classList.remove('active'));
+        this.classList.add('active');
+        
+        const view = this.dataset.view;
+        let imageSrc;
+        
+        if (view === 'front') {
+            imageSrc = `Assets/img/${currentTshirt}.jpg`;
+        } else {
+            imageSrc = `Assets/img/${currentTshirt}-${view}.jpg`;
+        }
+        
+        // Update main image
+        document.getElementById('mainImage').src = imageSrc;
+    });
+});
+
+// Quantity controls
+document.getElementById('incQty').addEventListener('click', function() {
+    const qtyElement = document.getElementById('qtyNum');
+    let qty = parseInt(qtyElement.textContent);
+    qtyElement.textContent = qty + 1;
+});
+
+document.getElementById('decQty').addEventListener('click', function() {
+    const qtyElement = document.getElementById('qtyNum');
+    let qty = parseInt(qtyElement.textContent);
+    if (qty > 1) {
+        qtyElement.textContent = qty - 1;
+    }
+});
+
+
 // Custom Alert System
 function showCustomAlert(message, title = 'Alert', type = 'info') {
     // Remove existing alerts
